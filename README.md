@@ -42,6 +42,13 @@ AgencyLinksView()
 
 Pass `style: AgencyStyle(...)` to `AgencyConfiguration` to customize the bundled SwiftUI screens. Style colors use ARGB `UInt32` values, with card/control corner radii in points. `AgencyStyle.shopar` is the default and `AgencyStyle.midnight` is available. Appearance is immutable after `ShoparAgency.configure`.
 
+```swift
+try ShoparAgency.configure(AgencyConfiguration(
+    appID: "app_<dashboard-id>",
+    style: AgencyStyle(accentColor: 0xFFD8F36A, cardCornerRadius: 18)
+))
+```
+
 ## Discovery initialization
 
 ```swift
@@ -59,6 +66,13 @@ Discovery has a separate anonymous gRPC client and no Agency token storage or au
 Call `ShoparDiscovery.resetInstallationIdentity()` only after a user explicitly requests an identity reset. The SDK stores the `dev_` ID in a non-synchronizing, `ThisDeviceOnly` Keychain item and keeps an excluded-from-backup app-private fallback for pre-first-unlock startup. A same-device reinstall may retain the Keychain ID; reset rotates it and leaves prior server history separate. Storage loss can also result in a new ID.
 
 Pass `style: DiscoveryStyle(...)` to `DiscoveryConfiguration` to customize placement cards and controls. Style colors use ARGB `UInt32` values, with card/control corner radii in points. `DiscoveryStyle.shopar` is the default and `DiscoveryStyle.midnight` is available. Appearance is fixed when `ShoparDiscovery.configure` initializes the module. The host still owns placement sizing and layout; the SDK response supplies content and the server-selected format.
+
+```swift
+try ShoparDiscovery.configure(DiscoveryConfiguration(
+    appID: "app_<dashboard-id>",
+    style: DiscoveryStyle(accentColor: 0xFFD8F36A, cardCornerRadius: 18)
+))
+```
 
 ## Privacy and samples
 
