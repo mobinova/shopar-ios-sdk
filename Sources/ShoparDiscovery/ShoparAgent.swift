@@ -41,7 +41,9 @@ final class ShoparAgent {
         let device = collect ? (UIDevice.current.userInterfaceIdiom == .pad ? "iPad" : "iPhone") : "unknown"
         let vendor = collect ? "Apple" : "unknown"
         let model = collect ? Self.machineIdentifier() : "unknown"
-        let os = collect ? "iOS \(UIDevice.current.systemVersion)" : "unknown"
+        // Keep the platform family available for SDK routing. The optional
+        // preference controls the OS version and device details.
+        let os = collect ? "iOS \(UIDevice.current.systemVersion)" : "iOS"
         let locale = collect ? Locale.current.identifier : "unknown"
         let timezone = collect ? TimeZone.current.identifier : "unknown"
         return "Shopar/1/\(ShoparDiscovery.sdkVersion) (\(vendor); \(Self.clean(model)); \(Self.clean(os)); \(device); \(installationID); \(Self.clean(locale)); \(Self.clean(timezone))) native"
