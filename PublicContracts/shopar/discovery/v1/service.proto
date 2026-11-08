@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package shopar.discovery.v1;
+
+option go_package = "github.com/mobinova/shopar-backend/internal/proto/shopar/discovery/v1";
+option java_multiple_files = true;
+option java_package = "app.shopar.proto.discovery.v1";
+option swift_prefix = "Shopar_Discovery_V1_";
+
+import "shopar/discovery/v1/entities.proto";
+
+// DiscoverySDKService is a public, unauthenticated product-placement surface.
+// The app owner is resolved from app_id; consumer identity is never accepted.
+service DiscoverySDKService {
+  rpc GetPlacementProducts(GetPlacementProductsRequest) returns (GetPlacementProductsResponse);
+  rpc RecordPlacementImpressions(RecordPlacementImpressionsRequest) returns (RecordPlacementImpressionsResponse);
+  rpc OpenProduct(OpenProductRequest) returns (OpenProductResponse);
+}

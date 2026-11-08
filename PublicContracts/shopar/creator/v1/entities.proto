@@ -1,0 +1,200 @@
+syntax = "proto3";
+
+package shopar.creator.v1;
+
+option go_package = "github.com/mobinova/shopar-backend/internal/proto/shopar/creator/v1";
+option java_multiple_files = true;
+option java_package = "app.shopar.proto.creator.v1";
+option swift_prefix = "Shopar_Creator_V1_";
+
+import "google/protobuf/timestamp.proto";
+import "shopar/common/v1/entities.proto";
+
+message StartAgencySessionRequest {
+  string email = 1;
+  // Public app property identifier. The backend validates it and binds the
+  // resolved Agency/referral context to the OTP challenge.
+  string app_id = 2;
+}
+
+message StartAgencySessionResponse {
+  string request_id = 1;
+  int32 expires_in_seconds = 2;
+}
+
+message ConfirmAgencySessionRequest {
+  string request_id = 1;
+  string code = 2;
+  string confirmation_nonce = 3;
+}
+
+message AgencySDKSessionTokens {
+  string access_token = 1;
+  string refresh_token = 2;
+  int64 access_token_expires_at = 3;
+  int64 refresh_token_expires_at = 4;
+}
+
+// User-safe, allowlisted profile projection for the Agency SDK.
+message AgencyCreatorProfile {
+  string full_name = 1;
+  string public_username = 2;
+  string profile_image_url = 3;
+  bool adult_eligibility_met = 4;
+}
+
+message UpdateAgencyCreatorProfileRequest {
+  optional string full_name = 1;
+  optional string public_username = 2;
+}
+
+message SetAgencyCreatorProfilePhotoRequest {
+  bytes image = 1;
+  string content_type = 2;
+}
+
+message AgencyCreatorSocialAccount {
+  string platform = 1;
+  string username = 2;
+  string public_url = 3;
+}
+
+message AgencyCreatorSocialAccountList {
+  repeated AgencyCreatorSocialAccount accounts = 1;
+}
+
+message SaveAgencyCreatorSocialAccountRequest {
+  string platform = 1;
+  string username = 2;
+  string public_url = 3;
+}
+
+message DeleteAgencyCreatorSocialAccountRequest {
+  string platform = 1;
+}
+
+message AgencyReferralDisclosure {
+  // Relationship is resolved for the authenticated Shopar user and the
+  // server-bound Agency SDK app; it is not supplied by the caller.
+  string relationship = 1;
+  string referral_agency_label = 2;
+  string current_app_agency_label = 3;
+  repeated string agency_visible_data_categories = 4;
+  string disclosure_version = 5;
+}
+
+message AgencySDKSession {
+  string session_id = 1;
+  string app_id = 2;
+  string agency_label = 3;
+  string app_name = 4;
+  string platform = 5;
+  string device_model = 6;
+  string operating_system = 7;
+  string app_version = 8;
+  google.protobuf.Timestamp last_active_at = 9;
+  bool is_current_session = 10;
+}
+
+message AgencySDKSessionList {
+  repeated AgencySDKSession sessions = 1;
+  shopar.common.v1.PageInfo page = 2;
+}
+
+message ListMyAgencySDKSessionsRequest {
+  shopar.common.v1.PageRequest page = 1;
+}
+
+message RevokeMyAgencySDKSessionRequest {
+  string session_id = 1;
+}
+
+message CreateAgencyCreatorLinkRequest {
+  oneof subject {
+    string product_id = 1;
+    string deal_id = 2;
+    string collection_id = 3;
+  }
+  string idempotency_key = 4;
+}
+
+message AgencyCreatorLinkListRequest {
+  shopar.common.v1.PageRequest page = 1;
+}
+
+message AgencyCreatorLinkPerformanceRequest {
+  string shared_link_id = 1;
+  string period = 2;
+}
+
+message AgencyCreatorLink {
+  string id = 1;
+  string product_id = 2;
+  string deal_id = 3;
+  string share_url = 4;
+  string status = 5;
+  int64 unique_visitors = 6;
+  int64 successful_redirects = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+  shopar.common.v1.Money share_attributed_spr = 10;
+}
+
+message AgencyCreatorLinkList {
+  repeated AgencyCreatorLink links = 1;
+  shopar.common.v1.PageInfo page = 2;
+}
+
+message AgencyCreatorLinkPerformance {
+  string shared_link_id = 1;
+  int64 unique_visitors = 2;
+  int64 successful_redirects = 3;
+  shopar.common.v1.Money share_attributed_spr = 4;
+  google.protobuf.Timestamp as_of = 5;
+}
+
+message OpenAgencyCreatorLinkRequest {
+  string shared_link_id = 1;
+  string idempotency_key = 2;
+}
+
+message OpenAgencyCreatorLinkResponse {
+  // Public Shopar short URL only. No affiliate destination is returned.
+  string share_url = 1;
+}
+
+message AgencyCreatorSocialAccountResponse {
+  AgencyCreatorSocialAccount account = 1;
+}
+
+message AgencyCreatorProfilePhotoResponse {
+  string profile_image_url = 1;
+}
+
+message AgencySDKAuthResponse {
+  AgencyCreatorProfile profile = 1;
+  AgencySDKSessionTokens tokens = 2;
+  bool is_new_account = 3;
+  AgencyReferralDisclosure referral_disclosure = 4;
+}
+
+message RefreshAgencySessionRequest { string refresh_token = 1; }
+
+message AgencyProductOrDeal {
+  string item_id = 1;
+  string item_kind = 2;
+  string title = 3;
+  string subtitle = 4;
+  string image_url = 5;
+  shopar.common.v1.Money price = 6;
+}
+
+message SearchAgencyCatalogRequest {
+  string query = 1;
+  shopar.common.v1.PageRequest page = 2;
+}
+
+message SearchAgencyCatalogResponse {
+  repeated AgencyProductOrDeal items = 1;
+  shopar.common.v1.PageInfo page = 2;
+}

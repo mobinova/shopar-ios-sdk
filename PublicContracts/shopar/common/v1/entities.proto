@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package shopar.common.v1;
+
+option go_package = "github.com/mobinova/shopar-backend/internal/proto/shopar/common/v1";
+option java_multiple_files = true;
+option java_package = "app.shopar.proto.common.v1";
+option swift_prefix = "Shopar_Common_V1_";
+
+message Money {
+  int64 minor_units = 1;
+  string currency = 2;
+}
+
+message Currency {
+  string code = 1;
+  string name = 2;
+  int32 minor_unit = 3;
+}
+
+message PageRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+message PageInfo {
+  int32 page = 1;
+  int32 page_size = 2;
+  int32 total_page_count = 3;
+  int64 total_item_count = 4;
+}

@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+package shopar.discovery.v1;
+
+option go_package = "github.com/mobinova/shopar-backend/internal/proto/shopar/discovery/v1";
+option java_multiple_files = true;
+option java_package = "app.shopar.proto.discovery.v1";
+option swift_prefix = "Shopar_Discovery_V1_";
+
+import "google/protobuf/timestamp.proto";
+import "shopar/common/v1/entities.proto";
+
+message GetPlacementProductsRequest {
+  string app_id = 1;
+  string placement_id = 2;
+  int32 page_size = 3;
+  string page_token = 4;
+  // Optional optimistic continuation. A mismatched active revision returns
+  // PLACEMENT_REFRESH_REQUIRED rather than mixing placement configurations.
+  int64 expected_config_revision = 5;
+  // Stable client request ID reused by transport retries for request rate dedupe.
+  string request_id = 6;
+}
+
+message DiscoveryPlacementProduct {
+  string product_id = 1;
+  string product_title = 2;
+  string product_image_url = 3;
+  string merchant_name = 4;
+  string seller_name = 5;
+  shopar.common.v1.Money displayed_price = 6;
+  string cta_text = 7;
+  string disclosure_text = 8;
+  // Exact ProductListingDestination GID selected by the backend. It does not
+  // reveal the destination URL and is not an authorization credential.
+  string offer_ref = 9;
+  // Server-derived: manual_product, selected_interest, shopar_recommendation.
+  string selection_source = 10;
+  // Current price observation shown on this card, when available.
+  string price_observation_id = 11;
+}
+
+message GetPlacementProductsResponse {
+  string placement_id = 1;
+  string display_format = 2;
+  int64 config_revision = 3;
+  repeated DiscoveryPlacementProduct products = 4;
+  string next_page_token = 5;
+  bool has_more = 6;
+  google.protobuf.Timestamp as_of = 7;
+  // Stable values: ok, placement_refresh_required, placement_inactive.
+  string outcome = 8;
+}
+
+message RecordPlacementImpressionsRequest {
+  string app_id = 1;
+  string placement_id = 2;
+  int64 config_revision = 3;
+  repeated PlacementImpression impressions = 4;
+}
+
+message PlacementImpression {
+  string event_id = 1;
+  string screen_view_id = 2;
+  string product_id = 3;
+  string offer_ref = 4;
+  google.protobuf.Timestamp observed_at = 5;
+  // Client observation only. Backend validates bounds and never treats this
+  // field as proof of a merchant visit or as reward authority.
+  int32 visible_duration_ms = 6;
+}
+
+message RecordPlacementImpressionsResponse {
+  int32 accepted_count = 1;
+  repeated string rejected_event_ids = 2;
+}
+
+message OpenProductRequest {
+  string app_id = 1;
+  string placement_id = 2;
+  int64 config_revision = 3;
+  string product_id = 4;
+  string offer_ref = 5;
+  string request_id = 6;
+  string price_observation_id = 7;
+  string screen_view_id = 8;
+  // Stable client-generated idempotency key for this product tap/open.
+  string event_id = 9;
+}
+
+message OpenProductResponse {
+  // Stable response codes: opened, offer_changed, offer_unavailable,
+  // placement_refresh_required, placement_inactive.
+  string outcome = 1;
+  string redirect_url = 2;
+  string opening_reference = 3;
+  string product_id = 4;
+  string offer_ref = 5;
+  int64 config_revision = 6;
+}

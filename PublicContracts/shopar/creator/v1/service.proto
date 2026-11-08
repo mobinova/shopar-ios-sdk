@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package shopar.creator.v1;
+
+option go_package = "github.com/mobinova/shopar-backend/internal/proto/shopar/creator/v1";
+option java_multiple_files = true;
+option java_package = "app.shopar.proto.creator.v1";
+option swift_prefix = "Shopar_Creator_V1_";
+
+import "google/protobuf/empty.proto";
+import "shopar/creator/v1/entities.proto";
+
+// CreatorSDKService is the capability-limited user surface embedded by Agency
+// partners. Every method requires an Agency SDK PWT and server-validated app
+// binding. It is not an Agency management service.
+service CreatorSDKService {
+  rpc StartAgencySession(StartAgencySessionRequest) returns (StartAgencySessionResponse);
+  rpc ConfirmAgencySession(ConfirmAgencySessionRequest) returns (AgencySDKAuthResponse);
+  rpc RefreshAgencySession(RefreshAgencySessionRequest) returns (AgencySDKSessionTokens);
+  rpc EndAgencySession(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc GetMyAgencyProfile(google.protobuf.Empty) returns (AgencyCreatorProfile);
+  rpc UpdateMyAgencyProfile(UpdateAgencyCreatorProfileRequest) returns (AgencyCreatorProfile);
+  rpc SetMyAgencyProfilePhoto(SetAgencyCreatorProfilePhotoRequest) returns (AgencyCreatorProfilePhotoResponse);
+  rpc ListMySocialAccounts(google.protobuf.Empty) returns (AgencyCreatorSocialAccountList);
+  rpc SaveMySocialAccount(SaveAgencyCreatorSocialAccountRequest) returns (AgencyCreatorSocialAccountResponse);
+  rpc DeleteMySocialAccount(DeleteAgencyCreatorSocialAccountRequest) returns (google.protobuf.Empty);
+  rpc GetMyAgencyReferralDisclosure(google.protobuf.Empty) returns (AgencyReferralDisclosure);
+  rpc SearchShareableCatalog(SearchAgencyCatalogRequest) returns (SearchAgencyCatalogResponse);
+  rpc CreateLink(CreateAgencyCreatorLinkRequest) returns (AgencyCreatorLink);
+  rpc ListMyLinks(AgencyCreatorLinkListRequest) returns (AgencyCreatorLinkList);
+  rpc GetMyLinkPerformance(AgencyCreatorLinkPerformanceRequest) returns (AgencyCreatorLinkPerformance);
+  rpc OpenLink(OpenAgencyCreatorLinkRequest) returns (OpenAgencyCreatorLinkResponse);
+  rpc ListMySessions(ListMyAgencySDKSessionsRequest) returns (AgencySDKSessionList);
+  rpc RevokeMySession(RevokeMyAgencySDKSessionRequest) returns (google.protobuf.Empty);
+}

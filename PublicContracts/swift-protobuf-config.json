@@ -1,0 +1,13 @@
+{
+  "invocations": [
+    {
+      "protoFiles": [
+        "shopar/common/v1/entities.proto",
+        "shopar/creator/v1/entities.proto",
+        "shopar/discovery/v1/entities.proto"
+      ],
+      "visibility": "Public",
+      "protoPath": "."
+    }
+  ]
+}

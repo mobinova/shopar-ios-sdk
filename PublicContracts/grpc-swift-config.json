@@ -1,0 +1,10 @@
+{
+  "protoFiles": [
+    "shopar/creator/v1/service.proto",
+    "shopar/discovery/v1/service.proto"
+  ],
+  "importPaths": ["."],
+  "invocations": [
+    { "protoFiles": ["shopar/creator/v1/service.proto", "shopar/discovery/v1/service.proto"], "visibility": "public", "server": false, "client": true }
+  ]
+}

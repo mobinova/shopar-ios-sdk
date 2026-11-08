@@ -1,0 +1,8 @@
+.build/
+.swiftpm/
+.DS_Store
+*.xcuserstate
+DerivedData/
+*.p8
+*.p12
+*.mobileprovision
