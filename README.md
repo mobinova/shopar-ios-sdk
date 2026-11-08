@@ -40,6 +40,8 @@ AgencyLinksView()
 
 `AgencySignInView` runs Shopar email OTP and displays the relationship disclosure before continuing when the account's referral owner is another Agency. Public results contain safe profile and link fields; access and refresh PWTs stay in SDK-managed Keychain storage. Call `await ShoparAgency.onHostAccountChanged()` when the host app signs out or switches host users so the Shopar session and account-scoped views are ended. `AgencyLinksView(onOpenAccountSecurity:)` can route users to the host's Shopar account-security screen for reviewing and revoking sessions across Shopar and other apps; the SDK's own device screen remains limited to the current Agency app.
 
+Pass `style: AgencyStyle(...)` to `AgencyConfiguration` to customize the bundled SwiftUI screens. Style colors use ARGB `UInt32` values, with card/control corner radii in points. `AgencyStyle.shopar` is the default and `AgencyStyle.midnight` is available. Appearance is immutable after `ShoparAgency.configure`.
+
 ## Discovery initialization
 
 ```swift
@@ -55,6 +57,8 @@ Discovery has a separate anonymous gRPC client and no Agency token storage or au
 `collectDeviceMetadata` sets the initial preference. Call `ShoparDiscovery.setOptionalDeviceMetadataCollectionEnabled(_:)` whenever the host privacy preference changes; `false` omits optional model/OS/locale/timezone values from future requests without rotating the `dev_` installation ID. There is no queued optional context to drain. Required app/placement/event attribution continues. The installation ID is not a person identifier.
 
 Call `ShoparDiscovery.resetInstallationIdentity()` only after a user explicitly requests an identity reset. The SDK stores the `dev_` ID in a non-synchronizing, `ThisDeviceOnly` Keychain item and keeps an excluded-from-backup app-private fallback for pre-first-unlock startup. A same-device reinstall may retain the Keychain ID; reset rotates it and leaves prior server history separate. Storage loss can also result in a new ID.
+
+Pass `style: DiscoveryStyle(...)` to `DiscoveryConfiguration` to customize placement cards and controls. Style colors use ARGB `UInt32` values, with card/control corner radii in points. `DiscoveryStyle.shopar` is the default and `DiscoveryStyle.midnight` is available. Appearance is fixed when `ShoparDiscovery.configure` initializes the module. The host still owns placement sizing and layout; the SDK response supplies content and the server-selected format.
 
 ## Privacy and samples
 

@@ -173,6 +173,7 @@ public struct AgencyLinksView: View {
             }
         }
         .tint(style.primaryColor.shoparAgencyColor)
+        .foregroundStyle(style.textColor.shoparAgencyColor)
         .environment(\.colorScheme, style.isDark ? .dark : .light)
         .background(style.backgroundColor.shoparAgencyColor.ignoresSafeArea())
     }
