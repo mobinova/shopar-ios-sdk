@@ -7,6 +7,8 @@ public enum ShoparAgency {
     private static var storedConfiguration: AgencyConfiguration?
     private static var runtime: AgencyRuntime?
 
+    static var configuredStyle: AgencyStyle { storedConfiguration?.style ?? .shopar }
+
     public static let sessions=AgencySessionObservable()
     public static var creatorSession: AgencyCreatorSession? { sessions.session }
 

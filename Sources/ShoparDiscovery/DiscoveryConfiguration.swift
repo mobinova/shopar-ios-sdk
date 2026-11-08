@@ -8,8 +8,9 @@ public struct DiscoveryConfiguration: Sendable, Equatable {
     public let useTLS: Bool
     /// Public device attributes are optional. The installation ID is still used for event deduplication.
     public let collectDeviceMetadata: Bool
+    public let style: DiscoveryStyle
 
-    public init(appID: String, grpcHost: String = "grpc.shopar.app", grpcPort: Int = 443, useTLS: Bool = true, collectDeviceMetadata: Bool = false) throws {
+    public init(appID: String, grpcHost: String = "grpc.shopar.app", grpcPort: Int = 443, useTLS: Bool = true, collectDeviceMetadata: Bool = false, style: DiscoveryStyle = .shopar) throws {
         guard appID.range(of: #"^app_[0-9A-HJKMNP-TV-Z]{26}$"#, options: .regularExpression) != nil else {
             throw DiscoverySDKError.invalidAppID
         }
@@ -21,6 +22,7 @@ public struct DiscoveryConfiguration: Sendable, Equatable {
         self.grpcPort = grpcPort
         self.useTLS = useTLS
         self.collectDeviceMetadata = collectDeviceMetadata
+        self.style = style
     }
 }
 

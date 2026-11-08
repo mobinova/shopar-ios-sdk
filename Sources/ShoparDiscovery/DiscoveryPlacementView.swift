@@ -6,6 +6,7 @@ public struct DiscoveryPlacementView:View{
     private let placementID:String
     private let runtime:DiscoveryRuntime
     private let onProductSelected:(DiscoveryProduct)->Void
+    private var style:DiscoveryStyle{runtime.configuration.style}
     @Environment(\.scenePhase) private var scenePhase
     @State private var page:DiscoveryPage?
     @State private var screenViewID=ShoparAgent.newEventID()
@@ -21,31 +22,35 @@ public struct DiscoveryPlacementView:View{
 
     public var body:some View{
         Group{
-            if loading&&page==nil{ProgressView().frame(maxWidth:.infinity).padding()}
+            if loading&&page==nil{ProgressView().tint(style.primaryColor.shoparDiscoveryColor).frame(maxWidth:.infinity).padding()}
             else if let page{placementContent(page)}
-            else{VStack(alignment:.leading,spacing:10){Text(errorMessage.isEmpty ? "Shopar ürünleri yüklenemedi.":errorMessage).font(.footnote);Button("Tekrar dene"){refreshCounter+=1}.buttonStyle(.bordered)}.padding()}
+            else{VStack(alignment:.leading,spacing:10){Text(errorMessage.isEmpty ? "Shopar ürünleri yüklenemedi.":errorMessage).font(.footnote);Button("Tekrar dene"){refreshCounter+=1}.buttonStyle(ShoparDiscoveryPrimaryButtonStyle(style:style))}.padding()}
         }
+        .foregroundStyle(style.textColor.shoparDiscoveryColor)
+        .tint(style.primaryColor.shoparDiscoveryColor)
+        .environment(\.colorScheme, style.isDark ? .dark : .light)
+        .background(style.backgroundColor.shoparDiscoveryColor)
         .task(id:refreshCounter){await loadFirstPage()}
     }
 
     @ViewBuilder private func placementContent(_ page:DiscoveryPage)->some View{
         if page.products.isEmpty{
-            if page.format=="full_page_feed"{VStack(spacing:10){Text("Şu anda gösterilecek ürün yok.").font(.headline);Text("Daha sonra tekrar deneyebilirsin.").font(.footnote).foregroundStyle(.secondary);Button("Yenile"){refreshCounter+=1}.buttonStyle(.bordered)}.frame(maxWidth:.infinity).padding()}
+            if page.format=="full_page_feed"{VStack(spacing:10){Text("Şu anda gösterilecek ürün yok.").font(.headline);Text("Daha sonra tekrar deneyebilirsin.").font(.footnote).foregroundStyle(style.secondaryTextColor.shoparDiscoveryColor);Button("Yenile"){refreshCounter+=1}.buttonStyle(ShoparDiscoveryPrimaryButtonStyle(style:style))}.frame(maxWidth:.infinity).padding()}
             else{Color.clear.frame(height:0)}
         }else{
             GeometryReader{container in
                 let viewport=container.frame(in:.global)
                 switch page.format{
                 case "horizontal_rail":
-                    ScrollView(.horizontal){LazyHStack(spacing:12){ForEach(page.products){product in DiscoveryProductCard(appID:runtime.configuration.appID,placementID:placementID,page:page,screenViewID:screenViewID,product:product,runtime:runtime,viewport:viewport,foreground:scenePhase == .active,onStale:{errorMessage=$0;refreshCounter+=1},onSelected:onProductSelected).frame(width:260)};if page.hasMore{ProgressView().onAppear{loadMore()}}}.padding(.horizontal,12)}
+                    ScrollView(.horizontal){LazyHStack(spacing:12){ForEach(page.products){product in DiscoveryProductCard(appID:runtime.configuration.appID,placementID:placementID,page:page,screenViewID:screenViewID,product:product,runtime:runtime,style:style,viewport:viewport,foreground:scenePhase == .active,onStale:{errorMessage=$0;refreshCounter+=1},onSelected:onProductSelected).frame(width:260)};if page.hasMore{ProgressView().tint(style.primaryColor.shoparDiscoveryColor).onAppear{loadMore()}}}.padding(.horizontal,12)}
                 case "single_card":
-                    if let product=page.products.first{DiscoveryProductCard(appID:runtime.configuration.appID,placementID:placementID,page:page,screenViewID:screenViewID,product:product,runtime:runtime,viewport:viewport,foreground:scenePhase == .active,onStale:{errorMessage=$0;refreshCounter+=1},onSelected:onProductSelected).padding(12)}
+                    if let product=page.products.first{DiscoveryProductCard(appID:runtime.configuration.appID,placementID:placementID,page:page,screenViewID:screenViewID,product:product,runtime:runtime,style:style,viewport:viewport,foreground:scenePhase == .active,onStale:{errorMessage=$0;refreshCounter+=1},onSelected:onProductSelected).padding(12)}
                 default:
-                    ScrollView{LazyVStack(spacing:12){ForEach(page.products){product in DiscoveryProductCard(appID:runtime.configuration.appID,placementID:placementID,page:page,screenViewID:screenViewID,product:product,runtime:runtime,viewport:viewport,foreground:scenePhase == .active,onStale:{errorMessage=$0;refreshCounter+=1},onSelected:onProductSelected)};if page.hasMore{ProgressView().onAppear{loadMore()}}}.padding(12)}
+                    ScrollView{LazyVStack(spacing:12){ForEach(page.products){product in DiscoveryProductCard(appID:runtime.configuration.appID,placementID:placementID,page:page,screenViewID:screenViewID,product:product,runtime:runtime,style:style,viewport:viewport,foreground:scenePhase == .active,onStale:{errorMessage=$0;refreshCounter+=1},onSelected:onProductSelected)};if page.hasMore{ProgressView().tint(style.primaryColor.shoparDiscoveryColor).onAppear{loadMore()}}}.padding(12)}
                 }
             }
             .frame(minHeight:page.format=="single_card" ? 360:0)
-            if !errorMessage.isEmpty{Text(errorMessage).font(.caption).foregroundStyle(.secondary).padding(.horizontal,12)}
+            if !errorMessage.isEmpty{Text(errorMessage).font(.caption).foregroundStyle(style.secondaryTextColor.shoparDiscoveryColor).padding(.horizontal,12)}
         }
     }
 
@@ -61,7 +66,7 @@ public struct DiscoveryPlacementView:View{
 
 @MainActor
 private struct DiscoveryProductCard:View{
-    let appID:String;let placementID:String;let page:DiscoveryPage;let screenViewID:String;let product:DiscoveryProduct;let runtime:DiscoveryRuntime;let viewport:CGRect;let foreground:Bool;let onStale:(String)->Void;let onSelected:(DiscoveryProduct)->Void
+    let appID:String;let placementID:String;let page:DiscoveryPage;let screenViewID:String;let product:DiscoveryProduct;let runtime:DiscoveryRuntime;let style:DiscoveryStyle;let viewport:CGRect;let foreground:Bool;let onStale:(String)->Void;let onSelected:(DiscoveryProduct)->Void
     @Environment(\.openURL) private var openURL
     @State private var frame:CGRect = .zero
     @State private var sent=false
@@ -73,14 +78,14 @@ private struct DiscoveryProductCard:View{
 
     var body:some View{
         VStack(alignment:.leading,spacing:9){
-            if let url=URL(string:product.imageURL),!product.imageURL.isEmpty{AsyncImage(url:url){image in image.resizable().scaledToFill()}placeholder:{Color.secondary.opacity(0.08)}.frame(height:190).frame(maxWidth:.infinity).clipped()}
-            Text(product.title).font(.headline)
-            Text([product.merchantName,product.sellerName].filter{!$0.isEmpty}.joined(separator:" · ")).font(.subheadline).foregroundStyle(.secondary)
-            Text(formatPrice(product.priceMinorUnits,product.currency)).font(.title3.weight(.semibold))
-            Text(product.disclosureText).font(.caption).foregroundStyle(.secondary)
-            Button{openProduct()}label:{if busy{ProgressView()}else{Text(product.ctaText.isEmpty ? "Mağazaya git":product.ctaText)}}.buttonStyle(.borderedProminent).frame(maxWidth:.infinity)
+            if let url=URL(string:product.imageURL),!product.imageURL.isEmpty{AsyncImage(url:url){image in image.resizable().scaledToFill()}placeholder:{style.surfaceSubtleColor.shoparDiscoveryColor}.frame(height:190).frame(maxWidth:.infinity).clipped()}
+            Text(product.title).font(.headline).foregroundStyle(style.textColor.shoparDiscoveryColor)
+            Text([product.merchantName,product.sellerName].filter{!$0.isEmpty}.joined(separator:" · ")).font(.subheadline).foregroundStyle(style.secondaryTextColor.shoparDiscoveryColor)
+            Text(formatPrice(product.priceMinorUnits,product.currency)).font(.title3.weight(.semibold)).foregroundStyle(style.primaryColor.shoparDiscoveryColor)
+            Text(product.disclosureText).font(.caption).foregroundStyle(style.secondaryTextColor.shoparDiscoveryColor)
+            Button{openProduct()}label:{if busy{ProgressView().tint(style.onAccentColor.shoparDiscoveryColor)}else{Text(product.ctaText.isEmpty ? "Mağazaya git":product.ctaText)}}.buttonStyle(ShoparDiscoveryPrimaryButtonStyle(style:style))
         }
-        .padding(14).background(.background,in:RoundedRectangle(cornerRadius:14)).overlay(RoundedRectangle(cornerRadius:14).stroke(Color.secondary.opacity(0.16)))
+        .padding(14).background(style.surfaceColor.shoparDiscoveryColor,in:RoundedRectangle(cornerRadius:style.cardCornerRadius)).overlay(RoundedRectangle(cornerRadius:style.cardCornerRadius).stroke(style.borderColor.shoparDiscoveryColor))
         .background(GeometryReader{proxy in Color.clear.preference(key:DiscoveryFramePreference.self,value:proxy.frame(in:.global))})
         .onPreferenceChange(DiscoveryFramePreference.self){frame=$0}
         .onAppear{updateImpressionTask()}

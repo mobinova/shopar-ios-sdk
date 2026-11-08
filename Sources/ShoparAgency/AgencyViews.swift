@@ -10,6 +10,7 @@ public struct AgencySignInView: View {
     @State private var errorMessage = ""
     @State private var busy = false
     @State private var showRelationshipDetails = false
+    private var style: AgencyStyle { ShoparAgency.configuredStyle }
 
     public init(onSignedIn: @escaping (AgencyCreatorSession) -> Void = { _ in }) {
         self.onSignedIn = onSignedIn
@@ -20,9 +21,9 @@ public struct AgencySignInView: View {
             Text("Shopar hesabına giriş yap")
                 .font(.largeTitle.bold())
             Text("Link oluşturup performansını bu uygulamadan yönetebilirsin.")
-                .foregroundStyle(.secondary)
+                .foregroundStyle(style.secondaryTextColor.shoparAgencyColor)
             if !errorMessage.isEmpty {
-                Text(errorMessage).foregroundStyle(.red).font(.footnote)
+                Text(errorMessage).foregroundStyle(style.dangerColor.shoparAgencyColor).font(.footnote)
             }
 
             if let result {
@@ -36,6 +37,10 @@ public struct AgencySignInView: View {
         }
         .padding(22)
         .frame(maxWidth: 560, alignment: .leading)
+        .foregroundStyle(style.textColor.shoparAgencyColor)
+        .tint(style.primaryColor.shoparAgencyColor)
+        .environment(\.colorScheme, style.isDark ? .dark : .light)
+        .background(style.backgroundColor.shoparAgencyColor)
     }
 
     private var emailEntry: some View {
@@ -57,7 +62,7 @@ public struct AgencySignInView: View {
             } label: {
                 if busy { ProgressView() } else { Text("Doğrulama kodu gönder") }
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(ShoparAgencyPrimaryButtonStyle(style: style))
             .disabled(busy || !email.contains("@"))
             .frame(maxWidth: .infinity)
         }
@@ -66,7 +71,7 @@ public struct AgencySignInView: View {
     private func codeEntry(_ challenge: AgencySignInChallenge) -> some View {
         VStack(alignment: .leading, spacing: 14) {
             Text("E-postana gönderilen 6 haneli kodu gir. Kod \(max(1, challenge.expiresInSeconds / 60)) dakika geçerli.")
-                .font(.subheadline).foregroundStyle(.secondary)
+                .font(.subheadline).foregroundStyle(style.secondaryTextColor.shoparAgencyColor)
             TextField("Doğrulama kodu", text: $code)
                 .keyboardType(.numberPad)
                 .textContentType(.oneTimeCode)
@@ -83,7 +88,7 @@ public struct AgencySignInView: View {
             } label: {
                 if busy { ProgressView() } else { Text("Giriş yap") }
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(ShoparAgencyPrimaryButtonStyle(style: style))
             .disabled(busy || code.count != 6)
             .frame(maxWidth: .infinity)
             Button("E-postayı değiştir") { self.challenge = nil; code = "" }
@@ -104,7 +109,7 @@ public struct AgencySignInView: View {
                 }
                 if showRelationshipDetails {
                     Text("Yönlendiren ajans, mevcut Shopar referral kuralları kapsamında ilişkilendirilir. Bu uygulamanın oturumu ve uygulama paneli erişimi ayrı yetkilendirilir.")
-                        .font(.footnote).foregroundStyle(.secondary)
+                        .font(.footnote).foregroundStyle(style.secondaryTextColor.shoparAgencyColor)
                 }
                 Button(showRelationshipDetails ? "Daha az bilgi" : "Bu ne demek?") {
                     showRelationshipDetails.toggle()
@@ -113,12 +118,13 @@ public struct AgencySignInView: View {
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 14))
+            .background(style.surfaceSubtleColor.shoparAgencyColor, in: RoundedRectangle(cornerRadius: style.cardCornerRadius))
+            .overlay(RoundedRectangle(cornerRadius: style.cardCornerRadius).stroke(style.borderColor.shoparAgencyColor))
         }
         Text("Devam ederek Shopar hesabını bu uygulamada kullanırsın.")
-            .font(.footnote).foregroundStyle(.secondary)
+            .font(.footnote).foregroundStyle(style.secondaryTextColor.shoparAgencyColor)
         Button("Devam et") { onSignedIn(value) }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(ShoparAgencyPrimaryButtonStyle(style: style))
             .frame(maxWidth: .infinity)
     }
 }
@@ -134,6 +140,7 @@ public struct AgencyLinksView: View {
     @State private var showingSessions = false
     @State private var busy = false
     private let onOpenAccountSecurity: (() -> Void)?
+    private var style: AgencyStyle { ShoparAgency.configuredStyle }
 
     public init(onOpenAccountSecurity: (() -> Void)? = nil) {
         self.onOpenAccountSecurity = onOpenAccountSecurity
@@ -165,6 +172,9 @@ public struct AgencyLinksView: View {
                 errorMessage = "Shopar hesabına ulaşılamadı. Bağlantını kontrol et."
             }
         }
+        .tint(style.primaryColor.shoparAgencyColor)
+        .environment(\.colorScheme, style.isDark ? .dark : .light)
+        .background(style.backgroundColor.shoparAgencyColor.ignoresSafeArea())
     }
 
     private var linksContent: some View {
@@ -178,6 +188,7 @@ public struct AgencyLinksView: View {
                     } label: {
                         Label("Ara", systemImage: "magnifyingglass")
                     }
+                    .buttonStyle(ShoparAgencyPrimaryButtonStyle(style: style))
                     .disabled(busy || query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
                 if !catalog.isEmpty {
@@ -196,7 +207,7 @@ public struct AgencyLinksView: View {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(item.title).font(.subheadline.weight(.semibold))
                                     if !item.subtitle.isEmpty {
-                                        Text(item.subtitle).font(.caption).foregroundStyle(.secondary)
+                                        Text(item.subtitle).font(.caption).foregroundStyle(style.secondaryTextColor.shoparAgencyColor)
                                     }
                                     let price = Decimal(item.priceMinorUnits) / 100
                                     Text("\(price.formatted(.number.precision(.fractionLength(0...2)))) \(item.currency)")
@@ -213,7 +224,7 @@ public struct AgencyLinksView: View {
                 Section("Paylaşımlarım") {
                     if links.isEmpty {
                         Text("Henüz paylaşımın yok. Shopar kataloğundan bir ürün seçip link oluştur.")
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(style.secondaryTextColor.shoparAgencyColor)
                     }
                     ForEach(links) { link in
                         VStack(alignment: .leading, spacing: 8) {
@@ -221,7 +232,7 @@ public struct AgencyLinksView: View {
                                 .font(.subheadline.weight(.semibold))
                             Text(link.shareURL).font(.caption).foregroundStyle(.secondary)
                             Text("Ziyaretçi \(link.uniqueVisitors) · Mağaza yönlendirmesi \(link.successfulRedirects)")
-                                .font(.caption2).foregroundStyle(.secondary)
+                                .font(.caption2).foregroundStyle(style.secondaryTextColor.shoparAgencyColor)
                             if let url = URL(string: link.shareURL) {
                                 ShareLink(item: url) { Label("Paylaş", systemImage: "square.and.arrow.up") }
                                     .buttonStyle(.bordered)
@@ -230,10 +241,12 @@ public struct AgencyLinksView: View {
                     }
                 }
                 if !errorMessage.isEmpty {
-                    Section { Text(errorMessage).foregroundStyle(.red).font(.footnote) }
+                    Section { Text(errorMessage).foregroundStyle(style.dangerColor.shoparAgencyColor).font(.footnote) }
                 }
             }
             .navigationTitle("Shopar Creator")
+            .scrollContentBackground(.hidden)
+            .background(style.backgroundColor.shoparAgencyColor)
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button { showingSessions = true } label: { Image(systemName: "iphone.gen3") }
@@ -273,6 +286,7 @@ public struct AgencySessionsView: View {
     @State private var sessions: [AgencyDeviceSession] = []
     @State private var errorMessage = ""
     private let onOpenAccountSecurity: (() -> Void)?
+    private var style: AgencyStyle { ShoparAgency.configuredStyle }
     public init(onOpenAccountSecurity: (() -> Void)? = nil) { self.onOpenAccountSecurity = onOpenAccountSecurity }
 
     public var body: some View {
@@ -289,10 +303,10 @@ public struct AgencySessionsView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(session.appName).font(.headline)
                         Text("\(session.agencyName) · \(session.platform) · \(session.model)").font(.subheadline)
-                        Text("\(session.operatingSystem) · \(session.appVersion)").font(.caption).foregroundStyle(.secondary)
+                        Text("\(session.operatingSystem) · \(session.appVersion)").font(.caption).foregroundStyle(style.secondaryTextColor.shoparAgencyColor)
                         if let lastActiveAt = session.lastActiveAt {
                             Text("Son etkinlik: \(lastActiveAt.formatted(date: .abbreviated, time: .shortened))")
-                                .font(.caption).foregroundStyle(.secondary)
+                                .font(.caption).foregroundStyle(style.secondaryTextColor.shoparAgencyColor)
                         }
                         if session.isCurrent { Text("Bu cihaz").font(.caption.weight(.semibold)) }
                         if !session.isCurrent {
@@ -308,9 +322,13 @@ public struct AgencySessionsView: View {
                         }
                     }
                 }
-                if !errorMessage.isEmpty { Text(errorMessage).foregroundStyle(.red) }
+                if !errorMessage.isEmpty { Text(errorMessage).foregroundStyle(style.dangerColor.shoparAgencyColor) }
             }
             .navigationTitle("Bu uygulamadaki cihazlar")
+            .scrollContentBackground(.hidden)
+            .background(style.backgroundColor.shoparAgencyColor)
+            .tint(style.primaryColor.shoparAgencyColor)
+            .environment(\.colorScheme, style.isDark ? .dark : .light)
             .task {
                 do { sessions = try await ShoparAgency.myAgencySDKSessions() }
                 catch { errorMessage = "Cihaz listesi yüklenemedi." }
