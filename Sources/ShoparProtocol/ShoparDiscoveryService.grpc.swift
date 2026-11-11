@@ -11,7 +11,7 @@ import NIOConcurrencyHelpers
 import SwiftProtobuf
 
 
-/// DiscoverySDKService is a public, unauthenticated product-placement surface.
+/// DiscoverySDKService is a public, unauthenticated Product/Deal placement surface.
 /// The app owner is resolved from app_id; consumer identity is never accepted.
 ///
 /// Usage: instantiate `Shopar_Discovery_V1_DiscoverySDKServiceClient`, then call methods of this protocol to make API calls.
@@ -33,6 +33,11 @@ public protocol Shopar_Discovery_V1_DiscoverySDKServiceClientProtocol: GRPCClien
     _ request: Shopar_Discovery_V1_OpenProductRequest,
     callOptions: CallOptions?
   ) -> UnaryCall<Shopar_Discovery_V1_OpenProductRequest, Shopar_Discovery_V1_OpenProductResponse>
+
+  func openDeal(
+    _ request: Shopar_Discovery_V1_OpenDealRequest,
+    callOptions: CallOptions?
+  ) -> UnaryCall<Shopar_Discovery_V1_OpenDealRequest, Shopar_Discovery_V1_OpenDealResponse>
 }
 
 extension Shopar_Discovery_V1_DiscoverySDKServiceClientProtocol {
@@ -91,6 +96,24 @@ extension Shopar_Discovery_V1_DiscoverySDKServiceClientProtocol {
       request: request,
       callOptions: callOptions ?? self.defaultCallOptions,
       interceptors: self.interceptors?.makeOpenProductInterceptors() ?? []
+    )
+  }
+
+  /// Unary call to OpenDeal
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to OpenDeal.
+  ///   - callOptions: Call options.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  public func openDeal(
+    _ request: Shopar_Discovery_V1_OpenDealRequest,
+    callOptions: CallOptions? = nil
+  ) -> UnaryCall<Shopar_Discovery_V1_OpenDealRequest, Shopar_Discovery_V1_OpenDealResponse> {
+    return self.makeUnaryCall(
+      path: Shopar_Discovery_V1_DiscoverySDKServiceClientMetadata.Methods.openDeal.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeOpenDealInterceptors() ?? []
     )
   }
 }
@@ -152,7 +175,7 @@ public struct Shopar_Discovery_V1_DiscoverySDKServiceNIOClient: Shopar_Discovery
   }
 }
 
-/// DiscoverySDKService is a public, unauthenticated product-placement surface.
+/// DiscoverySDKService is a public, unauthenticated Product/Deal placement surface.
 /// The app owner is resolved from app_id; consumer identity is never accepted.
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public protocol Shopar_Discovery_V1_DiscoverySDKServiceAsyncClientProtocol: GRPCClient {
@@ -173,6 +196,11 @@ public protocol Shopar_Discovery_V1_DiscoverySDKServiceAsyncClientProtocol: GRPC
     _ request: Shopar_Discovery_V1_OpenProductRequest,
     callOptions: CallOptions?
   ) -> GRPCAsyncUnaryCall<Shopar_Discovery_V1_OpenProductRequest, Shopar_Discovery_V1_OpenProductResponse>
+
+  func makeOpenDealCall(
+    _ request: Shopar_Discovery_V1_OpenDealRequest,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncUnaryCall<Shopar_Discovery_V1_OpenDealRequest, Shopar_Discovery_V1_OpenDealResponse>
 }
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
@@ -220,6 +248,18 @@ extension Shopar_Discovery_V1_DiscoverySDKServiceAsyncClientProtocol {
       interceptors: self.interceptors?.makeOpenProductInterceptors() ?? []
     )
   }
+
+  public func makeOpenDealCall(
+    _ request: Shopar_Discovery_V1_OpenDealRequest,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncUnaryCall<Shopar_Discovery_V1_OpenDealRequest, Shopar_Discovery_V1_OpenDealResponse> {
+    return self.makeAsyncUnaryCall(
+      path: Shopar_Discovery_V1_DiscoverySDKServiceClientMetadata.Methods.openDeal.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeOpenDealInterceptors() ?? []
+    )
+  }
 }
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
@@ -259,6 +299,18 @@ extension Shopar_Discovery_V1_DiscoverySDKServiceAsyncClientProtocol {
       interceptors: self.interceptors?.makeOpenProductInterceptors() ?? []
     )
   }
+
+  public func openDeal(
+    _ request: Shopar_Discovery_V1_OpenDealRequest,
+    callOptions: CallOptions? = nil
+  ) async throws -> Shopar_Discovery_V1_OpenDealResponse {
+    return try await self.performAsyncUnaryCall(
+      path: Shopar_Discovery_V1_DiscoverySDKServiceClientMetadata.Methods.openDeal.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeOpenDealInterceptors() ?? []
+    )
+  }
 }
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
@@ -288,6 +340,9 @@ public protocol Shopar_Discovery_V1_DiscoverySDKServiceClientInterceptorFactoryP
 
   /// - Returns: Interceptors to use when invoking 'openProduct'.
   func makeOpenProductInterceptors() -> [ClientInterceptor<Shopar_Discovery_V1_OpenProductRequest, Shopar_Discovery_V1_OpenProductResponse>]
+
+  /// - Returns: Interceptors to use when invoking 'openDeal'.
+  func makeOpenDealInterceptors() -> [ClientInterceptor<Shopar_Discovery_V1_OpenDealRequest, Shopar_Discovery_V1_OpenDealResponse>]
 }
 
 public enum Shopar_Discovery_V1_DiscoverySDKServiceClientMetadata {
@@ -298,6 +353,7 @@ public enum Shopar_Discovery_V1_DiscoverySDKServiceClientMetadata {
       Shopar_Discovery_V1_DiscoverySDKServiceClientMetadata.Methods.getPlacementProducts,
       Shopar_Discovery_V1_DiscoverySDKServiceClientMetadata.Methods.recordPlacementImpressions,
       Shopar_Discovery_V1_DiscoverySDKServiceClientMetadata.Methods.openProduct,
+      Shopar_Discovery_V1_DiscoverySDKServiceClientMetadata.Methods.openDeal,
     ]
   )
 
@@ -317,6 +373,12 @@ public enum Shopar_Discovery_V1_DiscoverySDKServiceClientMetadata {
     public static let openProduct = GRPCMethodDescriptor(
       name: "OpenProduct",
       path: "/shopar.discovery.v1.DiscoverySDKService/OpenProduct",
+      type: GRPCCallType.unary
+    )
+
+    public static let openDeal = GRPCMethodDescriptor(
+      name: "OpenDeal",
+      path: "/shopar.discovery.v1.DiscoverySDKService/OpenDeal",
       type: GRPCCallType.unary
     )
   }

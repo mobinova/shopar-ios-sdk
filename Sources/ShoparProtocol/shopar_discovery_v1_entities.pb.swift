@@ -77,7 +77,7 @@ public struct Shopar_Discovery_V1_DiscoveryPlacementProduct: Sendable {
   /// reveal the destination URL and is not an authorization credential.
   public var offerRef: String = String()
 
-  /// Server-derived: manual_product, selected_interest, shopar_recommendation.
+  /// Server-derived: manual_product, manual_deal, selected_interest, shopar_recommendation.
   public var selectionSource: String = String()
 
   /// Current price observation shown on this card, when available.
@@ -88,6 +88,114 @@ public struct Shopar_Discovery_V1_DiscoveryPlacementProduct: Sendable {
   public init() {}
 
   fileprivate var _displayedPrice: Shopar_Common_V1_Money? = nil
+}
+
+public struct Shopar_Discovery_V1_DiscoveryPlacementItem: @unchecked Sendable {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  /// Stable values: product, deal.
+  public var itemKind: String {
+    get {return _storage._itemKind}
+    set {_uniqueStorage()._itemKind = newValue}
+  }
+
+  public var itemID: String {
+    get {return _storage._itemID}
+    set {_uniqueStorage()._itemID = newValue}
+  }
+
+  public var productID: String {
+    get {return _storage._productID}
+    set {_uniqueStorage()._productID = newValue}
+  }
+
+  public var dealID: String {
+    get {return _storage._dealID}
+    set {_uniqueStorage()._dealID = newValue}
+  }
+
+  public var title: String {
+    get {return _storage._title}
+    set {_uniqueStorage()._title = newValue}
+  }
+
+  public var imageURL: String {
+    get {return _storage._imageURL}
+    set {_uniqueStorage()._imageURL = newValue}
+  }
+
+  public var merchantName: String {
+    get {return _storage._merchantName}
+    set {_uniqueStorage()._merchantName = newValue}
+  }
+
+  public var sellerName: String {
+    get {return _storage._sellerName}
+    set {_uniqueStorage()._sellerName = newValue}
+  }
+
+  public var displayedPrice: Shopar_Common_V1_Money {
+    get {return _storage._displayedPrice ?? Shopar_Common_V1_Money()}
+    set {_uniqueStorage()._displayedPrice = newValue}
+  }
+  /// Returns true if `displayedPrice` has been explicitly set.
+  public var hasDisplayedPrice: Bool {return _storage._displayedPrice != nil}
+  /// Clears the value of `displayedPrice`. Subsequent reads from it will return its default value.
+  public mutating func clearDisplayedPrice() {_uniqueStorage()._displayedPrice = nil}
+
+  public var ctaText: String {
+    get {return _storage._ctaText}
+    set {_uniqueStorage()._ctaText = newValue}
+  }
+
+  public var disclosureText: String {
+    get {return _storage._disclosureText}
+    set {_uniqueStorage()._disclosureText = newValue}
+  }
+
+  /// Exact ProductListingDestination or Deal destination ID. Never a raw URL.
+  public var offerRef: String {
+    get {return _storage._offerRef}
+    set {_uniqueStorage()._offerRef = newValue}
+  }
+
+  public var selectionSource: String {
+    get {return _storage._selectionSource}
+    set {_uniqueStorage()._selectionSource = newValue}
+  }
+
+  public var priceObservationID: String {
+    get {return _storage._priceObservationID}
+    set {_uniqueStorage()._priceObservationID = newValue}
+  }
+
+  public var benefitLabel: String {
+    get {return _storage._benefitLabel}
+    set {_uniqueStorage()._benefitLabel = newValue}
+  }
+
+  public var decisiveCondition: String {
+    get {return _storage._decisiveCondition}
+    set {_uniqueStorage()._decisiveCondition = newValue}
+  }
+
+  public var dealRevision: String {
+    get {return _storage._dealRevision}
+    set {_uniqueStorage()._dealRevision = newValue}
+  }
+
+  public var couponCode: String {
+    get {return _storage._couponCode}
+    set {_uniqueStorage()._couponCode = newValue}
+  }
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 public struct Shopar_Discovery_V1_GetPlacementProductsResponse: Sendable {
@@ -118,6 +226,10 @@ public struct Shopar_Discovery_V1_GetPlacementProductsResponse: Sendable {
 
   /// Stable values: ok, placement_refresh_required, placement_inactive.
   public var outcome: String = String()
+
+  /// New clients use generic Product/Deal items. The legacy products field
+  /// remains populated with Product cards for older installed SDKs.
+  public var items: [Shopar_Discovery_V1_DiscoveryPlacementItem] = []
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -170,6 +282,10 @@ public struct Shopar_Discovery_V1_PlacementImpression: Sendable {
   /// field as proof of a merchant visit or as reward authority.
   public var visibleDurationMs: Int32 = 0
 
+  public var dealID: String = String()
+
+  public var itemKind: String = String()
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -212,7 +328,7 @@ public struct Shopar_Discovery_V1_OpenProductRequest: Sendable {
 
   public var screenViewID: String = String()
 
-  /// Stable client-generated idempotency key for this product tap/open.
+  /// Stable client-generated idempotency key for this Product tap/open.
   public var eventID: String = String()
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
@@ -234,6 +350,56 @@ public struct Shopar_Discovery_V1_OpenProductResponse: Sendable {
   public var openingReference: String = String()
 
   public var productID: String = String()
+
+  public var offerRef: String = String()
+
+  public var configRevision: Int64 = 0
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Shopar_Discovery_V1_OpenDealRequest: Sendable {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var appID: String = String()
+
+  public var placementID: String = String()
+
+  public var configRevision: Int64 = 0
+
+  public var dealID: String = String()
+
+  public var offerRef: String = String()
+
+  public var requestID: String = String()
+
+  public var screenViewID: String = String()
+
+  public var eventID: String = String()
+
+  public var dealRevision: String = String()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Shopar_Discovery_V1_OpenDealResponse: Sendable {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var outcome: String = String()
+
+  public var redirectURL: String = String()
+
+  public var openingReference: String = String()
+
+  public var dealID: String = String()
 
   public var offerRef: String = String()
 
@@ -406,6 +572,218 @@ extension Shopar_Discovery_V1_DiscoveryPlacementProduct: SwiftProtobuf.Message, 
   }
 }
 
+extension Shopar_Discovery_V1_DiscoveryPlacementItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".DiscoveryPlacementItem"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "item_kind"),
+    2: .standard(proto: "item_id"),
+    3: .standard(proto: "product_id"),
+    4: .standard(proto: "deal_id"),
+    5: .same(proto: "title"),
+    6: .standard(proto: "image_url"),
+    7: .standard(proto: "merchant_name"),
+    8: .standard(proto: "seller_name"),
+    9: .standard(proto: "displayed_price"),
+    10: .standard(proto: "cta_text"),
+    11: .standard(proto: "disclosure_text"),
+    12: .standard(proto: "offer_ref"),
+    13: .standard(proto: "selection_source"),
+    14: .standard(proto: "price_observation_id"),
+    15: .standard(proto: "benefit_label"),
+    16: .standard(proto: "decisive_condition"),
+    17: .standard(proto: "deal_revision"),
+    18: .standard(proto: "coupon_code"),
+  ]
+
+  fileprivate class _StorageClass {
+    var _itemKind: String = String()
+    var _itemID: String = String()
+    var _productID: String = String()
+    var _dealID: String = String()
+    var _title: String = String()
+    var _imageURL: String = String()
+    var _merchantName: String = String()
+    var _sellerName: String = String()
+    var _displayedPrice: Shopar_Common_V1_Money? = nil
+    var _ctaText: String = String()
+    var _disclosureText: String = String()
+    var _offerRef: String = String()
+    var _selectionSource: String = String()
+    var _priceObservationID: String = String()
+    var _benefitLabel: String = String()
+    var _decisiveCondition: String = String()
+    var _dealRevision: String = String()
+    var _couponCode: String = String()
+
+    #if swift(>=5.10)
+      // This property is used as the initial default value for new instances of the type.
+      // The type itself is protecting the reference to its storage via CoW semantics.
+      // This will force a copy to be made of this reference when the first mutation occurs;
+      // hence, it is safe to mark this as `nonisolated(unsafe)`.
+      static nonisolated(unsafe) let defaultInstance = _StorageClass()
+    #else
+      static let defaultInstance = _StorageClass()
+    #endif
+
+    private init() {}
+
+    init(copying source: _StorageClass) {
+      _itemKind = source._itemKind
+      _itemID = source._itemID
+      _productID = source._productID
+      _dealID = source._dealID
+      _title = source._title
+      _imageURL = source._imageURL
+      _merchantName = source._merchantName
+      _sellerName = source._sellerName
+      _displayedPrice = source._displayedPrice
+      _ctaText = source._ctaText
+      _disclosureText = source._disclosureText
+      _offerRef = source._offerRef
+      _selectionSource = source._selectionSource
+      _priceObservationID = source._priceObservationID
+      _benefitLabel = source._benefitLabel
+      _decisiveCondition = source._decisiveCondition
+      _dealRevision = source._dealRevision
+      _couponCode = source._couponCode
+    }
+  }
+
+  fileprivate mutating func _uniqueStorage() -> _StorageClass {
+    if !isKnownUniquelyReferenced(&_storage) {
+      _storage = _StorageClass(copying: _storage)
+    }
+    return _storage
+  }
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    _ = _uniqueStorage()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      while let fieldNumber = try decoder.nextFieldNumber() {
+        // The use of inline closures is to circumvent an issue where the compiler
+        // allocates stack space for every case branch when no optimizations are
+        // enabled. https://github.com/apple/swift-protobuf/issues/1034
+        switch fieldNumber {
+        case 1: try { try decoder.decodeSingularStringField(value: &_storage._itemKind) }()
+        case 2: try { try decoder.decodeSingularStringField(value: &_storage._itemID) }()
+        case 3: try { try decoder.decodeSingularStringField(value: &_storage._productID) }()
+        case 4: try { try decoder.decodeSingularStringField(value: &_storage._dealID) }()
+        case 5: try { try decoder.decodeSingularStringField(value: &_storage._title) }()
+        case 6: try { try decoder.decodeSingularStringField(value: &_storage._imageURL) }()
+        case 7: try { try decoder.decodeSingularStringField(value: &_storage._merchantName) }()
+        case 8: try { try decoder.decodeSingularStringField(value: &_storage._sellerName) }()
+        case 9: try { try decoder.decodeSingularMessageField(value: &_storage._displayedPrice) }()
+        case 10: try { try decoder.decodeSingularStringField(value: &_storage._ctaText) }()
+        case 11: try { try decoder.decodeSingularStringField(value: &_storage._disclosureText) }()
+        case 12: try { try decoder.decodeSingularStringField(value: &_storage._offerRef) }()
+        case 13: try { try decoder.decodeSingularStringField(value: &_storage._selectionSource) }()
+        case 14: try { try decoder.decodeSingularStringField(value: &_storage._priceObservationID) }()
+        case 15: try { try decoder.decodeSingularStringField(value: &_storage._benefitLabel) }()
+        case 16: try { try decoder.decodeSingularStringField(value: &_storage._decisiveCondition) }()
+        case 17: try { try decoder.decodeSingularStringField(value: &_storage._dealRevision) }()
+        case 18: try { try decoder.decodeSingularStringField(value: &_storage._couponCode) }()
+        default: break
+        }
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every if/case branch local when no optimizations
+      // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+      // https://github.com/apple/swift-protobuf/issues/1182
+      if !_storage._itemKind.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._itemKind, fieldNumber: 1)
+      }
+      if !_storage._itemID.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._itemID, fieldNumber: 2)
+      }
+      if !_storage._productID.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._productID, fieldNumber: 3)
+      }
+      if !_storage._dealID.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._dealID, fieldNumber: 4)
+      }
+      if !_storage._title.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._title, fieldNumber: 5)
+      }
+      if !_storage._imageURL.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._imageURL, fieldNumber: 6)
+      }
+      if !_storage._merchantName.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._merchantName, fieldNumber: 7)
+      }
+      if !_storage._sellerName.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._sellerName, fieldNumber: 8)
+      }
+      try { if let v = _storage._displayedPrice {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 9)
+      } }()
+      if !_storage._ctaText.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._ctaText, fieldNumber: 10)
+      }
+      if !_storage._disclosureText.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._disclosureText, fieldNumber: 11)
+      }
+      if !_storage._offerRef.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._offerRef, fieldNumber: 12)
+      }
+      if !_storage._selectionSource.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._selectionSource, fieldNumber: 13)
+      }
+      if !_storage._priceObservationID.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._priceObservationID, fieldNumber: 14)
+      }
+      if !_storage._benefitLabel.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._benefitLabel, fieldNumber: 15)
+      }
+      if !_storage._decisiveCondition.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._decisiveCondition, fieldNumber: 16)
+      }
+      if !_storage._dealRevision.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._dealRevision, fieldNumber: 17)
+      }
+      if !_storage._couponCode.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._couponCode, fieldNumber: 18)
+      }
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Shopar_Discovery_V1_DiscoveryPlacementItem, rhs: Shopar_Discovery_V1_DiscoveryPlacementItem) -> Bool {
+    if lhs._storage !== rhs._storage {
+      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
+        let _storage = _args.0
+        let rhs_storage = _args.1
+        if _storage._itemKind != rhs_storage._itemKind {return false}
+        if _storage._itemID != rhs_storage._itemID {return false}
+        if _storage._productID != rhs_storage._productID {return false}
+        if _storage._dealID != rhs_storage._dealID {return false}
+        if _storage._title != rhs_storage._title {return false}
+        if _storage._imageURL != rhs_storage._imageURL {return false}
+        if _storage._merchantName != rhs_storage._merchantName {return false}
+        if _storage._sellerName != rhs_storage._sellerName {return false}
+        if _storage._displayedPrice != rhs_storage._displayedPrice {return false}
+        if _storage._ctaText != rhs_storage._ctaText {return false}
+        if _storage._disclosureText != rhs_storage._disclosureText {return false}
+        if _storage._offerRef != rhs_storage._offerRef {return false}
+        if _storage._selectionSource != rhs_storage._selectionSource {return false}
+        if _storage._priceObservationID != rhs_storage._priceObservationID {return false}
+        if _storage._benefitLabel != rhs_storage._benefitLabel {return false}
+        if _storage._decisiveCondition != rhs_storage._decisiveCondition {return false}
+        if _storage._dealRevision != rhs_storage._dealRevision {return false}
+        if _storage._couponCode != rhs_storage._couponCode {return false}
+        return true
+      }
+      if !storagesAreEqual {return false}
+    }
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
 extension Shopar_Discovery_V1_GetPlacementProductsResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".GetPlacementProductsResponse"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
@@ -417,6 +795,7 @@ extension Shopar_Discovery_V1_GetPlacementProductsResponse: SwiftProtobuf.Messag
     6: .standard(proto: "has_more"),
     7: .standard(proto: "as_of"),
     8: .same(proto: "outcome"),
+    9: .same(proto: "items"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -433,6 +812,7 @@ extension Shopar_Discovery_V1_GetPlacementProductsResponse: SwiftProtobuf.Messag
       case 6: try { try decoder.decodeSingularBoolField(value: &self.hasMore_p) }()
       case 7: try { try decoder.decodeSingularMessageField(value: &self._asOf) }()
       case 8: try { try decoder.decodeSingularStringField(value: &self.outcome) }()
+      case 9: try { try decoder.decodeRepeatedMessageField(value: &self.items) }()
       default: break
       }
     }
@@ -467,6 +847,9 @@ extension Shopar_Discovery_V1_GetPlacementProductsResponse: SwiftProtobuf.Messag
     if !self.outcome.isEmpty {
       try visitor.visitSingularStringField(value: self.outcome, fieldNumber: 8)
     }
+    if !self.items.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.items, fieldNumber: 9)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -479,6 +862,7 @@ extension Shopar_Discovery_V1_GetPlacementProductsResponse: SwiftProtobuf.Messag
     if lhs.hasMore_p != rhs.hasMore_p {return false}
     if lhs._asOf != rhs._asOf {return false}
     if lhs.outcome != rhs.outcome {return false}
+    if lhs.items != rhs.items {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -543,6 +927,8 @@ extension Shopar_Discovery_V1_PlacementImpression: SwiftProtobuf.Message, SwiftP
     4: .standard(proto: "offer_ref"),
     5: .standard(proto: "observed_at"),
     6: .standard(proto: "visible_duration_ms"),
+    7: .standard(proto: "deal_id"),
+    8: .standard(proto: "item_kind"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -557,6 +943,8 @@ extension Shopar_Discovery_V1_PlacementImpression: SwiftProtobuf.Message, SwiftP
       case 4: try { try decoder.decodeSingularStringField(value: &self.offerRef) }()
       case 5: try { try decoder.decodeSingularMessageField(value: &self._observedAt) }()
       case 6: try { try decoder.decodeSingularInt32Field(value: &self.visibleDurationMs) }()
+      case 7: try { try decoder.decodeSingularStringField(value: &self.dealID) }()
+      case 8: try { try decoder.decodeSingularStringField(value: &self.itemKind) }()
       default: break
       }
     }
@@ -585,6 +973,12 @@ extension Shopar_Discovery_V1_PlacementImpression: SwiftProtobuf.Message, SwiftP
     if self.visibleDurationMs != 0 {
       try visitor.visitSingularInt32Field(value: self.visibleDurationMs, fieldNumber: 6)
     }
+    if !self.dealID.isEmpty {
+      try visitor.visitSingularStringField(value: self.dealID, fieldNumber: 7)
+    }
+    if !self.itemKind.isEmpty {
+      try visitor.visitSingularStringField(value: self.itemKind, fieldNumber: 8)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -595,6 +989,8 @@ extension Shopar_Discovery_V1_PlacementImpression: SwiftProtobuf.Message, SwiftP
     if lhs.offerRef != rhs.offerRef {return false}
     if lhs._observedAt != rhs._observedAt {return false}
     if lhs.visibleDurationMs != rhs.visibleDurationMs {return false}
+    if lhs.dealID != rhs.dealID {return false}
+    if lhs.itemKind != rhs.itemKind {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -773,6 +1169,148 @@ extension Shopar_Discovery_V1_OpenProductResponse: SwiftProtobuf.Message, SwiftP
     if lhs.redirectURL != rhs.redirectURL {return false}
     if lhs.openingReference != rhs.openingReference {return false}
     if lhs.productID != rhs.productID {return false}
+    if lhs.offerRef != rhs.offerRef {return false}
+    if lhs.configRevision != rhs.configRevision {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Shopar_Discovery_V1_OpenDealRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".OpenDealRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "app_id"),
+    2: .standard(proto: "placement_id"),
+    3: .standard(proto: "config_revision"),
+    4: .standard(proto: "deal_id"),
+    5: .standard(proto: "offer_ref"),
+    6: .standard(proto: "request_id"),
+    7: .standard(proto: "screen_view_id"),
+    8: .standard(proto: "event_id"),
+    9: .standard(proto: "deal_revision"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.appID) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.placementID) }()
+      case 3: try { try decoder.decodeSingularInt64Field(value: &self.configRevision) }()
+      case 4: try { try decoder.decodeSingularStringField(value: &self.dealID) }()
+      case 5: try { try decoder.decodeSingularStringField(value: &self.offerRef) }()
+      case 6: try { try decoder.decodeSingularStringField(value: &self.requestID) }()
+      case 7: try { try decoder.decodeSingularStringField(value: &self.screenViewID) }()
+      case 8: try { try decoder.decodeSingularStringField(value: &self.eventID) }()
+      case 9: try { try decoder.decodeSingularStringField(value: &self.dealRevision) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.appID.isEmpty {
+      try visitor.visitSingularStringField(value: self.appID, fieldNumber: 1)
+    }
+    if !self.placementID.isEmpty {
+      try visitor.visitSingularStringField(value: self.placementID, fieldNumber: 2)
+    }
+    if self.configRevision != 0 {
+      try visitor.visitSingularInt64Field(value: self.configRevision, fieldNumber: 3)
+    }
+    if !self.dealID.isEmpty {
+      try visitor.visitSingularStringField(value: self.dealID, fieldNumber: 4)
+    }
+    if !self.offerRef.isEmpty {
+      try visitor.visitSingularStringField(value: self.offerRef, fieldNumber: 5)
+    }
+    if !self.requestID.isEmpty {
+      try visitor.visitSingularStringField(value: self.requestID, fieldNumber: 6)
+    }
+    if !self.screenViewID.isEmpty {
+      try visitor.visitSingularStringField(value: self.screenViewID, fieldNumber: 7)
+    }
+    if !self.eventID.isEmpty {
+      try visitor.visitSingularStringField(value: self.eventID, fieldNumber: 8)
+    }
+    if !self.dealRevision.isEmpty {
+      try visitor.visitSingularStringField(value: self.dealRevision, fieldNumber: 9)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Shopar_Discovery_V1_OpenDealRequest, rhs: Shopar_Discovery_V1_OpenDealRequest) -> Bool {
+    if lhs.appID != rhs.appID {return false}
+    if lhs.placementID != rhs.placementID {return false}
+    if lhs.configRevision != rhs.configRevision {return false}
+    if lhs.dealID != rhs.dealID {return false}
+    if lhs.offerRef != rhs.offerRef {return false}
+    if lhs.requestID != rhs.requestID {return false}
+    if lhs.screenViewID != rhs.screenViewID {return false}
+    if lhs.eventID != rhs.eventID {return false}
+    if lhs.dealRevision != rhs.dealRevision {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Shopar_Discovery_V1_OpenDealResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".OpenDealResponse"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "outcome"),
+    2: .standard(proto: "redirect_url"),
+    3: .standard(proto: "opening_reference"),
+    4: .standard(proto: "deal_id"),
+    5: .standard(proto: "offer_ref"),
+    6: .standard(proto: "config_revision"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.outcome) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.redirectURL) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self.openingReference) }()
+      case 4: try { try decoder.decodeSingularStringField(value: &self.dealID) }()
+      case 5: try { try decoder.decodeSingularStringField(value: &self.offerRef) }()
+      case 6: try { try decoder.decodeSingularInt64Field(value: &self.configRevision) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.outcome.isEmpty {
+      try visitor.visitSingularStringField(value: self.outcome, fieldNumber: 1)
+    }
+    if !self.redirectURL.isEmpty {
+      try visitor.visitSingularStringField(value: self.redirectURL, fieldNumber: 2)
+    }
+    if !self.openingReference.isEmpty {
+      try visitor.visitSingularStringField(value: self.openingReference, fieldNumber: 3)
+    }
+    if !self.dealID.isEmpty {
+      try visitor.visitSingularStringField(value: self.dealID, fieldNumber: 4)
+    }
+    if !self.offerRef.isEmpty {
+      try visitor.visitSingularStringField(value: self.offerRef, fieldNumber: 5)
+    }
+    if self.configRevision != 0 {
+      try visitor.visitSingularInt64Field(value: self.configRevision, fieldNumber: 6)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Shopar_Discovery_V1_OpenDealResponse, rhs: Shopar_Discovery_V1_OpenDealResponse) -> Bool {
+    if lhs.outcome != rhs.outcome {return false}
+    if lhs.redirectURL != rhs.redirectURL {return false}
+    if lhs.openingReference != rhs.openingReference {return false}
+    if lhs.dealID != rhs.dealID {return false}
     if lhs.offerRef != rhs.offerRef {return false}
     if lhs.configRevision != rhs.configRevision {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}

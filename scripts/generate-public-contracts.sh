@@ -38,4 +38,7 @@ rm -rf Sources/ShoparProtocol/shopar
 mv Sources/ShoparProtocol/shopar/creator/v1/service.grpc.swift Sources/ShoparProtocol/ShoparCreatorService.grpc.swift
 mv Sources/ShoparProtocol/shopar/discovery/v1/service.grpc.swift Sources/ShoparProtocol/ShoparDiscoveryService.grpc.swift
 rm -rf Sources/ShoparProtocol/shopar
+for source in Sources/ShoparProtocol/ShoparCreatorService.grpc.swift Sources/ShoparProtocol/ShoparDiscoveryService.grpc.swift; do
+  perl -0pi -e 's/\n+\z/\n/' "$source"
+done
 shasum -a 256 PublicContracts/shopar/common/v1/entities.proto PublicContracts/shopar/creator/v1/entities.proto PublicContracts/shopar/creator/v1/service.proto PublicContracts/shopar/discovery/v1/entities.proto PublicContracts/shopar/discovery/v1/service.proto > PublicContracts/SCHEMA_SHA256SUMS

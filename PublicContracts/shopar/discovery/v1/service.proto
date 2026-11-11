@@ -9,10 +9,11 @@ option swift_prefix = "Shopar_Discovery_V1_";
 
 import "shopar/discovery/v1/entities.proto";
 
-// DiscoverySDKService is a public, unauthenticated product-placement surface.
+// DiscoverySDKService is a public, unauthenticated Product/Deal placement surface.
 // The app owner is resolved from app_id; consumer identity is never accepted.
 service DiscoverySDKService {
   rpc GetPlacementProducts(GetPlacementProductsRequest) returns (GetPlacementProductsResponse);
   rpc RecordPlacementImpressions(RecordPlacementImpressionsRequest) returns (RecordPlacementImpressionsResponse);
   rpc OpenProduct(OpenProductRequest) returns (OpenProductResponse);
+  rpc OpenDeal(OpenDealRequest) returns (OpenDealResponse);
 }

@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Anonymous product placements. This module has no Agency token store or authorization metadata.
+/// Anonymous Product and Deal placements. This module has no Agency token store or authorization metadata.
 @MainActor
 public enum ShoparDiscovery {
     static let sdkVersion="0.1.0"
@@ -23,8 +23,8 @@ public enum ShoparDiscovery {
         try requireRuntime().resetInstallationIdentity()
     }
 
-    @ViewBuilder public static func Placement(placementID:String)->some View{
-        if let runtime{DiscoveryPlacementView(placementID:placementID,runtime:runtime)}
+    @ViewBuilder public static func Placement(placementID:String,onProductSelected:@escaping(DiscoveryProduct)->Void={_ in},onDealSelected:@escaping(String)->Void={_ in})->some View{
+        if let runtime{DiscoveryPlacementView(placementID:placementID,runtime:runtime,onProductSelected:onProductSelected,onDealSelected:onDealSelected)}
         else{DiscoveryUnavailableView(message:"Call ShoparDiscovery.configure before displaying this placement.")}
     }
 

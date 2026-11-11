@@ -34,10 +34,33 @@ message DiscoveryPlacementProduct {
   // Exact ProductListingDestination GID selected by the backend. It does not
   // reveal the destination URL and is not an authorization credential.
   string offer_ref = 9;
-  // Server-derived: manual_product, selected_interest, shopar_recommendation.
+  // Server-derived: manual_product, manual_deal, selected_interest, shopar_recommendation.
   string selection_source = 10;
   // Current price observation shown on this card, when available.
   string price_observation_id = 11;
+}
+
+message DiscoveryPlacementItem {
+  // Stable values: product, deal.
+  string item_kind = 1;
+  string item_id = 2;
+  string product_id = 3;
+  string deal_id = 4;
+  string title = 5;
+  string image_url = 6;
+  string merchant_name = 7;
+  string seller_name = 8;
+  shopar.common.v1.Money displayed_price = 9;
+  string cta_text = 10;
+  string disclosure_text = 11;
+  // Exact ProductListingDestination or Deal destination ID. Never a raw URL.
+  string offer_ref = 12;
+  string selection_source = 13;
+  string price_observation_id = 14;
+  string benefit_label = 15;
+  string decisive_condition = 16;
+  string deal_revision = 17;
+  string coupon_code = 18;
 }
 
 message GetPlacementProductsResponse {
@@ -50,6 +73,9 @@ message GetPlacementProductsResponse {
   google.protobuf.Timestamp as_of = 7;
   // Stable values: ok, placement_refresh_required, placement_inactive.
   string outcome = 8;
+  // New clients use generic Product/Deal items. The legacy products field
+  // remains populated with Product cards for older installed SDKs.
+  repeated DiscoveryPlacementItem items = 9;
 }
 
 message RecordPlacementImpressionsRequest {
@@ -68,6 +94,8 @@ message PlacementImpression {
   // Client observation only. Backend validates bounds and never treats this
   // field as proof of a merchant visit or as reward authority.
   int32 visible_duration_ms = 6;
+  string deal_id = 7;
+  string item_kind = 8;
 }
 
 message RecordPlacementImpressionsResponse {
@@ -84,7 +112,7 @@ message OpenProductRequest {
   string request_id = 6;
   string price_observation_id = 7;
   string screen_view_id = 8;
-  // Stable client-generated idempotency key for this product tap/open.
+  // Stable client-generated idempotency key for this Product tap/open.
   string event_id = 9;
 }
 
@@ -95,6 +123,27 @@ message OpenProductResponse {
   string redirect_url = 2;
   string opening_reference = 3;
   string product_id = 4;
+  string offer_ref = 5;
+  int64 config_revision = 6;
+}
+
+message OpenDealRequest {
+  string app_id = 1;
+  string placement_id = 2;
+  int64 config_revision = 3;
+  string deal_id = 4;
+  string offer_ref = 5;
+  string request_id = 6;
+  string screen_view_id = 7;
+  string event_id = 8;
+  string deal_revision = 9;
+}
+
+message OpenDealResponse {
+  string outcome = 1;
+  string redirect_url = 2;
+  string opening_reference = 3;
+  string deal_id = 4;
   string offer_ref = 5;
   int64 config_revision = 6;
 }
